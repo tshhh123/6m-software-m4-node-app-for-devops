@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.1 #
+  node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4 #assignment for module 4.5
   heroku: circleci/heroku@2.0.0 #lesson work for module 4.6
   
@@ -37,11 +37,11 @@ jobs:
       - docker/check
       - docker/build:
           image: tshhh123/container-assignment-4.5
-          tag: <<pipeline.git.tag>> #lesson work for module 4.6
+          tag: << pipeline.git.tag >> #lesson work for module 4.6
           # tag: "latestassignment" #assignment for module 4.5
       - docker/push:
           image: tshhh123/container-assignment-4.5
-          tag: <<pipeline.git.tag>> #lesson work for module 4.6
+          tag: << pipeline.git.tag >> #lesson work for module 4.6
           # tag: "latestassignment" #assignment for module 4.5
 #end of assignment for module 4.5
 
@@ -67,12 +67,12 @@ jobs:
       - setup_remote_docker
       - heroku/install
       - docker/pull:
-          images: tshhh123/container-assignment-4.5:<<pipeline.git.tag>>
+          images: tshhh123/container-assignment-4.5:<< pipeline.git.tag >>
       - run:
           name: Heroku Container Push
           command: |
             heroku container:login
-            docker tag tshhh123/container-assignment-4.5:<<pipeline.git.tag>> registry.heroku.com/tshhh123-devops/web
+            docker tag tshhh123/container-assignment-4.5:<< pipeline.git.tag >> registry.heroku.com/tshhh123-devops/web
             docker push registry.heroku.com/tshhh123-devops/web
             heroku container:release web -a tshhh123-devops  
 #end of lesson work for module 4.6
