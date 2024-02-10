@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.1 #
+  node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4 #assignment for module 4.5
   heroku: circleci/heroku@2.0.0 #lesson work for module 4.6
   
@@ -83,26 +83,20 @@ workflows:
       - build:
           filters: #assignment for module 4.6
             branches:
-              only: 
-                - main
-                - release
+              only: main
       - test:
           requires:
             - build
           filters: #assignment for module 4.6
             branches:
-              only: 
-                - main
-                - release
+              only: main
       - build-and-push: #start of assignment for module 4.5
           requires:
             - test #end of assignment for module 4.5
           filters: #assignment for module 4.6
             tags:
               only: /^v.*/
-            branches: 
-              only:
-                - release
+            branches:
               ignore: /.*/
       # - deploy:  #start of lesson work for module 4.6
       #     requires:
@@ -113,9 +107,7 @@ workflows:
           filters: #assignment for module 4.6
             tags:
               only: /^v.*/
-            branches: 
-              only:
-                - release
+            branches:
               ignore: /.*/
 
   runAll_workflow:
@@ -126,6 +118,7 @@ workflows:
               only: /^v.*/
             branches: 
               ignore: /.*/
+              only: release
       - test:
           requires:
             - build
@@ -134,6 +127,7 @@ workflows:
               only: /^v.*/
             branches: 
               ignore: /.*/
+              only: release
       - build-and-push: #start of assignment for module 4.5
           requires:
             - test #end of assignment for module 4.5
@@ -142,6 +136,7 @@ workflows:
               only: /^v.*/
             branches: 
               ignore: /.*/
+              only: release
       # - deploy:  #start of lesson work for module 4.6
       #     requires:
       #       - build-and-push
@@ -153,3 +148,4 @@ workflows:
               only: /^v.*/
             branches: 
               ignore: /.*/
+              only: release
