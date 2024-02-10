@@ -28,6 +28,16 @@ jobs:
   
   optional_publish:
       # Assignment
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run: |
+          echo "Running docker..."
+          docker build -t tshhh123/container-assignment-4.5:firsttest
+          ddocker push
 
 workflows:
   simple_workflow:
