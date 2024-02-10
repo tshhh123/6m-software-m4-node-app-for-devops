@@ -2,7 +2,8 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.1
-  docker: circleci/docker@2.1.4
+  docker: circleci/docker@2.1.4 #assignment for module 4.5
+  heroku: circleci/heroku@2.0.0 #lesson work for module 4.6
   
 jobs:
   build:
@@ -26,33 +27,8 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
-  
-  # publish:
-  #     # Assignment
-  #   docker:
-  #     - image: cimg/node:16.10
-  #   steps:
-  #     - checkout
-  #     - node/install-packages:
-  #         pkg-manager: npm
-  #     - run: |
-  #         echo "Running docker..."
-  #         docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:firsttest
-  #         ddocker push
-  # build-and-push:
-  #   executor: docker/docker
-  #   steps:
-  #     - setup_remote_docker
-  #     - checkout
-  #     - docker/check
-  #     - docker/build:
-  #         image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-  #     - docker/push:
-  #         image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-      # - run:
-      #     command: |
-      #       echo "Digest is: $(</tmp/digest.txt)"
 
+#start of assignment for module 4.5
   build-and-push:
     executor: docker/docker
     steps:
@@ -61,30 +37,75 @@ jobs:
       - docker/check
       - docker/build:
           image: tshhh123/container-assignment-4.5
-          # auth:
-          #   username: $DOCKER_USER
-          #   password: $DOCKER_PASS
-          tag: "latestassignment"
+          tag: <<pipeline.git.tag>> #lesson work for module 4.6
+          # tag: "latestassignment" #assignment for module 4.5
       - docker/push:
           image: tshhh123/container-assignment-4.5
-          tag: "latestassignment"
-          # tag: testassignment
-          # docker login -u $DOCKER_USER -p $DOCKER_PASS <- put under run command
-      # - run:
-      #     name: Docker Login
-      #     command: |
-      #       TAG=testassignment
-      #       docker build -t tshhh123/container-assignment-4.5:$TAG .
-      #       echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-      #       docker push container-assignment-4.5/container-assignment-4.5:$TAG
+          tag: <<pipeline.git.tag>> #lesson work for module 4.6
+          # tag: "latestassignment" #assignment for module 4.5
+#end of assignment for module 4.5
+
+#start of lesson work for module 4.6
+  # deploy:
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - setup_remote_docker
+  #     - checkout
+  #     - heroku/install
+  #     - run:
+  #         name: Heroku Container Push
+  #         command: |
+  #           heroku container:login
+  #           heroku container:push web -a tshhh123-devops
+  #           heroku container:release web -a tshhh123-devops  
+
+  pull-and-deploy:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - docker/pull:
+          image: tshhh123/container-assignment-4.5:<<pipeline.git.tag>>
+      - run:
+          name: Heroku Container Push
+          command: |
+            heroku container:login
+            docker tag tshhh123/container-assignment-4.5:<<pipeline.git.tag>> registry.heroku.com/tshhh123-devops/web
+            docker push registry.heroku.com/tshhh123-devops/web
+            heroku container:release web -a tshhh123-devops  
+#end of lesson work for module 4.6
 
 workflows:
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters: #assignment for module 4.6
+            branches:
+              only: main
       - test:
           requires:
             - build
-      - build-and-push:
+          filters: #assignment for module 4.6
+            branches:
+              only: main
+      - build-and-push: #start of assignment for module 4.5
           requires:
-            - test
+            - test #end of assignment for module 4.5
+          filters: #assignment for module 4.6
+            tags:
+              only: /^v.*/
+            branches: 
+              ignore: /.*/
+      # - deploy:  #start of lesson work for module 4.6
+      #     requires:
+      #       - build-and-push
+      - pull-and-deploy: 
+          requires:
+            - build-and-push  #end of lesson work for module 4.6
+          filters: #assignment for module 4.6
+            tags:
+              only: /^v.*/
+            branches: 
+              ignore: /.*/
