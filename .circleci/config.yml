@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.1
+  docker: circleci/docker@2.5.0
   
 jobs:
   build:
@@ -26,18 +27,31 @@ jobs:
           echo "Running tests..."
           npm run test
   
-  optional_publish:
-      # Assignment
-    docker:
-      - image: cimg/node:16.10
+  # publish:
+  #     # Assignment
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - checkout
+  #     - node/install-packages:
+  #         pkg-manager: npm
+  #     - run: |
+  #         echo "Running docker..."
+  #         docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:firsttest
+  #         ddocker push
+  build-and-push:
+    executor: docker/docker
     steps:
+      - setup_remote_docker
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run: |
-          echo "Running docker..."
-          docker build -t tshhh123/container-assignment-4.5:firsttest
-          ddocker push
+      - docker/check
+      - docker/build:
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+      - docker/push:
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
 
 workflows:
   simple_workflow:
@@ -46,3 +60,13 @@ workflows:
       - test:
           requires:
             - build
+  # build-and-push:
+    # jobs:
+    #   - build
+    #   - docker/publish:
+    #       image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+    #       tag: testbuildpublish
+    #       use-docker-credentials-store: true
+  commit:
+    jobs:
+      - build-and-push
