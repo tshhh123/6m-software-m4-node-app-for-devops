@@ -83,13 +83,17 @@ workflows:
       - build:
           filters: #assignment for module 4.6
             branches:
-              only: main
+              only: 
+                - main
+                - release
       - test:
           requires:
             - build
           filters: #assignment for module 4.6
             branches:
-              only: main
+              only: 
+                - main
+                - release
       - build-and-push: #start of assignment for module 4.5
           requires:
             - test #end of assignment for module 4.5
@@ -97,6 +101,8 @@ workflows:
             tags:
               only: /^v.*/
             branches: 
+              only:
+                - release
               ignore: /.*/
       # - deploy:  #start of lesson work for module 4.6
       #     requires:
@@ -108,6 +114,8 @@ workflows:
             tags:
               only: /^v.*/
             branches: 
+              only:
+                - release
               ignore: /.*/
 
   runAll_workflow:
