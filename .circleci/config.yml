@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.1
-  docker: circleci/docker@2.5.0
+  docker: circleci/docker@2.1.4
   
 jobs:
   build:
@@ -61,17 +61,22 @@ jobs:
       - docker/check
       - docker/build:
           image: tshhh123/container-assignment-4.5
+          auth:
+            username: $DOCKER_USER
+            password: $DOCKER_PASS
+          tag: "testassignment"
       - docker/push:
           image: tshhh123/container-assignment-4.5
+          tag: "testassignment"
           # tag: testassignment
           # docker login -u $DOCKER_USER -p $DOCKER_PASS <- put under run command
-      - run:
-          name: Docker Login
-          command: |
-            TAG=testassignment
-            docker build -t tshhh123/container-assignment-4.5:$TAG .
-            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker push container-assignment-4.5/container-assignment-4.5:$TAG
+      # - run:
+      #     name: Docker Login
+      #     command: |
+      #       TAG=testassignment
+      #       docker build -t tshhh123/container-assignment-4.5:$TAG .
+      #       echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+      #       docker push container-assignment-4.5/container-assignment-4.5:$TAG
 
 workflows:
   simple_workflow:
