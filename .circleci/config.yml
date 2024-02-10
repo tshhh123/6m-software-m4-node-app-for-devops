@@ -67,7 +67,7 @@ jobs:
       - setup_remote_docker
       - heroku/install
       - docker/pull:
-          images: tshhh123/container-assignment-4.5:${tag}
+          images: tshhh123/container-assignment-4.5:<< pipeline.git.tag >>
       - run:
           name: Heroku Container Push
           command: |
