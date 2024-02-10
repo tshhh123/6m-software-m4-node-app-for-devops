@@ -64,10 +64,10 @@ jobs:
           # auth:
           #   username: $DOCKER_USER
           #   password: $DOCKER_PASS
-          tag: "testassignment"
+          tag: "latestassignment"
       - docker/push:
           image: tshhh123/container-assignment-4.5
-          tag: "testassignment"
+          tag: "latestassignment"
           # tag: testassignment
           # docker login -u $DOCKER_USER -p $DOCKER_PASS <- put under run command
       # - run:
@@ -88,8 +88,3 @@ workflows:
       - build-and-push:
           requires:
             - test
-  # assignmenttest:
-  #   jobs:
-  #     - build-and-push
-  #         requires:
-  #           - test
