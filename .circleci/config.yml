@@ -63,8 +63,6 @@ jobs:
   pull-and-deploy:
     docker:
       - image: cimg/node:16.10
-    environment:
-      tag: << pipeline.git.tag >>
     steps:
       - setup_remote_docker
       - heroku/install
@@ -74,7 +72,7 @@ jobs:
           name: Heroku Container Push
           command: |
             heroku container:login
-            docker tag tshhh123/container-assignment-4.5:${tag} registry.heroku.com/tshhh123-devops/web
+            docker tag tshhh123/container-assignment-4.5:<< pipeline.git.tag >> registry.heroku.com/tshhh123-devops/web
             docker push registry.heroku.com/tshhh123-devops/web
             heroku container:release web -a tshhh123-devops  
 #end of lesson work for module 4.6
