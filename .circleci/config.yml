@@ -93,19 +93,9 @@ workflows:
       - build-and-push: #start of assignment for module 4.5
           requires:
             - test #end of assignment for module 4.5
-          filters: #assignment for module 4.6
-            tags:
-              only: /^v.*/
-            branches: 
-              ignore: /.*/
       # - deploy:  #start of lesson work for module 4.6
       #     requires:
       #       - build-and-push
       - pull-and-deploy: 
           requires:
             - build-and-push  #end of lesson work for module 4.6
-          filters: #assignment for module 4.6
-            tags:
-              only: /^v.*/
-            branches: 
-              ignore: /.*/
